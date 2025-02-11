@@ -1,0 +1,34 @@
+package com.sanjeet.chat.sdk.utils.globalExceptionHandller;
+
+public enum ErrorCode {
+
+    NOT_AUTHORIZED(400,"You are not authorized to access this resource"),
+    FAILED_TO_REGISTER(401,"Failed to register user."),
+    USER_IS_ALREADY_REGISTER(402,"User is already register with given credentials."),
+    FAILED_TO_LOGIN(403,"Failed to login the user."),
+    USER_NOT_FOUND(404, "User is not founded with given credentials."),
+    INVALID_API_KEY(405, "Provided API_KEY is invalid."),
+    FAILED_TO_EXTRACT_CLAIMS(406,"Failed to extract the claims"),
+
+    INTERNAL_ERROR(500, "An unexpected error occurred."),
+
+    RECEIVER_NOT_FOUND(600, "Receiver is not founded."),
+    SENDER_RECEIVER_PHONE_NO_CAN_NOT_BE_SAME(601, "Sender and receiver's phone no should be different.");
+
+
+    private final int code;
+    private final String message;
+
+    ErrorCode(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+}
