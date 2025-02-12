@@ -1,8 +1,11 @@
 package com.sanjeet.chat.sdk.model.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.Date;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AdminRegistrationResponse {
 
     private Long id;

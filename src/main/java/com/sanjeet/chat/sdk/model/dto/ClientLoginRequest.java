@@ -1,6 +1,6 @@
 package com.sanjeet.chat.sdk.model.dto;
 
-public class AdminLoginRequest {
+public class ClientLoginRequest {
 
     private String email;
     private String password;
@@ -23,7 +23,7 @@ public class AdminLoginRequest {
 
     @Override
     public String toString() {
-        return "AdminLoginRequest{" +
+        return "ClientLoginRequest{" +
                 "email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';

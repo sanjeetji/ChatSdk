@@ -5,14 +5,14 @@ import com.sanjeet.chat.sdk.model.Admin;
 import com.sanjeet.chat.sdk.model.dto.AdminLoginRequest;
 import com.sanjeet.chat.sdk.model.dto.AdminRegistrationResponse;
 import com.sanjeet.chat.sdk.service.AdminService;
-import com.sanjeet.chat.sdk.service.ClientService;
 import com.sanjeet.chat.sdk.utils.Constant;
 import com.sanjeet.chat.sdk.utils.HandleApiResponse;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,14 +24,13 @@ public class AdminController {
 
     private final AdminService adminService;
     private final HandleApiResponse handleApiResponse;
-    private final AuthenticationManager authenticationManager;
-    private final ClientService clientService;
+    private final AuthenticationProvider adminAuthenticationProvider;
 
-    public AdminController(AdminService adminService,HandleApiResponse handleApiResponse,AuthenticationManager authenticationManager,ClientService clientService){
+    public AdminController(AdminService adminService, HandleApiResponse handleApiResponse,
+                           @Qualifier("adminAuthenticationProvider") AuthenticationProvider adminAuthenticationProvider){
         this.adminService = adminService;
         this.handleApiResponse = handleApiResponse;
-        this.authenticationManager = authenticationManager;
-        this.clientService = clientService;
+        this.adminAuthenticationProvider = adminAuthenticationProvider;
     }
 
     @GetMapping("greeting")
@@ -55,7 +54,8 @@ public class AdminController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody AdminLoginRequest request){
         try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            System.out.println("Admin login Request = " + request);
+            Authentication authentication = adminAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             if (authentication.isAuthenticated()) {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 AdminRegistrationResponse response = adminService.verifyUser(request);

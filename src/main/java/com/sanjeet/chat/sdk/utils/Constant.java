@@ -30,6 +30,8 @@ public class Constant {
     public static final String USER_NOT_FOUND = "User not found";
     public static final String YOU_ARE_NOT_AUTHORIZED = "You are not authorized";
     public static final String LOGIN_SUCCESS = "Login Successful.";
+    public static final String REGISTRATION_SUCCESS = "Congratulation, You have register successful.";
+    public static final String REGISTRATION_FAILED = "Sorry, Registration has been failed.";
 
     static {
         System.out.println("PUBLIC_URLS: " + Arrays.toString(PUBLIC_URLS)); // Log the URLs
