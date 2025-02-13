@@ -1,8 +1,9 @@
 package com.sanjeet.chat.sdk.utils;
 
 
-import com.sanjeet.chat.sdk.model.Admin;
-import com.sanjeet.chat.sdk.model.Client;
+import com.sanjeet.chat.sdk.model.entity.Admin;
+import com.sanjeet.chat.sdk.model.entity.Client;
+import com.sanjeet.chat.sdk.model.entity.ClientUser;
 import com.sanjeet.chat.sdk.utils.globalExceptionHandller.AccessDeniedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
@@ -44,6 +45,22 @@ public class ValidateInputs {
         }
     }
 
+    public void handleUserRegistrationInput(ClientUser request){
+
+        if (request.getUsername() == null || request.getUsername().isEmpty()) {
+            throw new IllegalArgumentException("User name cannot be null or empty");
+        }
+        if (request.getPhoneNumber() == null || request.getPhoneNumber().isEmpty()) {
+            throw new IllegalArgumentException("User Phone cannot be null or empty");
+        }
+        if (request.getApiKey() == null || request.getApiKey().isEmpty()) {
+            throw new IllegalArgumentException("API KEY cannot be null or empty");
+        }
+        if (request.getUserImage() == null || request.getUserImage().isEmpty()) {
+            throw new IllegalArgumentException("User Image cannot be null or empty");
+        }
+    }
+
     public String extractToken(HttpServletRequest request){
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -66,4 +83,6 @@ public class ValidateInputs {
         }
         return apiKey;
     }
+
+
 }

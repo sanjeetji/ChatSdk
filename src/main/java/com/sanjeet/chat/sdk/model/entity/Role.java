@@ -1,10 +1,10 @@
-package com.sanjeet.chat.sdk.model;
+package com.sanjeet.chat.sdk.model.entity;
 
 import com.sanjeet.chat.sdk.utils.RoleName;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "Roles")
 public class Role {
 
     @Id

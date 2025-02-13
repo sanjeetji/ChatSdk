@@ -1,6 +1,7 @@
 package com.sanjeet.chat.sdk.service;
 
-import com.sanjeet.chat.sdk.model.Admin;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sanjeet.chat.sdk.model.entity.Admin;
 import com.sanjeet.chat.sdk.repository.AdminRepository;
 import com.sanjeet.chat.sdk.repository.ClientRepository;
 import com.sanjeet.chat.sdk.utils.Constant;
@@ -15,10 +16,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
-import static com.sanjeet.chat.sdk.utils.Constant.H_MAC_ALGORITHM;
+import static com.sanjeet.chat.sdk.utils.Constant.*;
 
 
 @Service
@@ -64,7 +66,9 @@ public class JwtService {
         if (secretKey == null) {
             throw new IllegalArgumentException("Invalid API Key");
         }
-        SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey));
+//        SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey));
+        Key key = getSigningKey(ADMIN);
+        System.out.println("🔑 Signing Key (USER) = " + key);
         String claimSessionToken = UUID.randomUUID().toString(); // Generate session token
         long expirationTime = 1000 * 60 * 60; // 1 hour for user tokens
         Map<String, Object> claims = new HashMap<>();
@@ -93,14 +97,14 @@ public class JwtService {
         if (registerAdmin.isEmpty()){
             throw new CustomBusinessException(ErrorCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
         }
-        initializeAdminSecretKey();
         String claimSessionToken = UUID.randomUUID().toString(); // Generate session token
         long expirationTime = 1000 * 60 * 60 * 24; // Token valid for 24 hours
         Map<String, Object> claims = new HashMap<>();
         claims.put(Constant.ROLE,Constant.ADMIN);
         claims.put(Constant.USER_NAME,email);
         claims.put(Constant.CLAIM_SESSION_TOKEN,claimSessionToken);
-        System.out.println("key = At generating admin session token 1 " + getKey() + " And Secret Key is : "+secretKey);
+        Key key = getSigningKey(ADMIN);
+        System.out.println("🔑 Signing Key (ADMIN) = " + key);
         return Jwts.builder()
                 .claims()
                 .add(claims)
@@ -108,7 +112,7 @@ public class JwtService {
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .and()
-                .signWith(getKey())
+                .signWith(key)
                 .compact();
     }
 
@@ -144,15 +148,53 @@ public class JwtService {
         }
     }
 
-    public Claims extractAllClaims(String token){
-        secretKey = "V97UNlRha40+yUZ+jalePCZ84pwVWMisHfq1/2i7Tz4=";
-        System.out.println("key = At extractAllClaims admin Key is " + getKey());
-        return Jwts
-                .parser()
-                .verifyWith(getKey())
+    public Claims extractAllClaims(String token) {
+
+        // Step 1: Extract the role without verification
+        String extractedRole = extractRoleFromToken(token);
+        System.out.println("🔍 Extracted Role from Token: " + extractedRole);
+
+        // Step 2: Fetch the correct key based on extracted role
+        SecretKey key = getSigningKey(extractedRole);
+        System.out.println("🔑 Using Signing Key for Role: " + extractedRole);
+
+//        SecretKey key = getSigningKey("ADMIN"); // ✅ Now returns a SecretKey
+//        System.out.println("🔑 Extracting Claims - Signing Key (ADMIN): " + key);
+
+        return Jwts.parser()
+                .verifyWith(key) // ✅ Now it will work because key is a SecretKey
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    private String extractRoleFromTokenOld(String token) {
+        return Jwts.parser()
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get(Constant.ROLE, String.class); // Assuming the claim key is "role"
+    }
+
+    private String extractRoleFromToken(String token) {
+        try {
+            String[] parts = token.split("\\."); // Split JWT: Header, Payload, Signature
+            if (parts.length < 2) {
+                throw new IllegalArgumentException("Invalid JWT Token");
+            }
+
+            // Decode the payload (middle part of JWT)
+            String payloadJson = new String(Base64.getDecoder().decode(parts[1]));
+            System.out.println("🔍 Decoded JWT Payload: " + payloadJson);
+
+            // Convert JSON to Map and extract role
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> claims = objectMapper.readValue(payloadJson, Map.class);
+            return (String) claims.get(Constant.ROLE); // Extract role
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to extract role from token", e);
+        }
     }
 
     private SecretKey getKey() {
@@ -160,10 +202,30 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-
     public Collection<GrantedAuthority> getAuthorities(String role) {
         return List.of(() -> "ROLE_"+role); // Assign role as GrantedAuthority
     }
+
+    private SecretKey getSigningKey(String role) {
+        System.out.println("🔍 All Available Environment Variables: " + System.getenv());
+        System.out.println("🔍 JWT_SECRET_ADMIN: " + System.getenv("JWT_SECRET_ADMIN"));
+
+        String secret = switch (role.toUpperCase()) {
+            case "ADMIN" -> System.getenv("JWT_SECRET_ADMIN");
+            case "CLIENT" -> System.getenv("JWT_SECRET_CLIENT");
+            case "USER" -> System.getenv("JWT_SECRET_USER");
+            default -> throw new IllegalArgumentException("Invalid role: " + role);
+        };
+
+        if (secret == null || secret.isEmpty()) {
+            throw new IllegalStateException("❌ Secret key is not set in environment variables for role: " + role);
+        }
+
+        // ✅ Ensure correct key format for HMAC-SHA256
+        byte[] decodedKey = Base64.getDecoder().decode(secret);
+        return Keys.hmacShaKeyFor(decodedKey);  // ✅ Returns a proper SecretKey
+    }
+
 
 
 

@@ -1,8 +1,8 @@
 package com.sanjeet.chat.sdk.config;
 
-import com.sanjeet.chat.sdk.model.Admin;
-import com.sanjeet.chat.sdk.model.Client;
-import com.sanjeet.chat.sdk.model.ClientUser;
+import com.sanjeet.chat.sdk.model.entity.Admin;
+import com.sanjeet.chat.sdk.model.entity.Client;
+import com.sanjeet.chat.sdk.model.entity.ClientUser;
 import com.sanjeet.chat.sdk.repository.AdminRepository;
 import com.sanjeet.chat.sdk.repository.ClientRepository;
 import com.sanjeet.chat.sdk.repository.UserRepository;

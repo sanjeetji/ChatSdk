@@ -9,6 +9,9 @@ public enum ErrorCode {
     USER_NOT_FOUND(404, "User is not founded with given credentials."),
     INVALID_API_KEY(405, "Provided API_KEY is invalid."),
     FAILED_TO_EXTRACT_CLAIMS(406,"Failed to extract the claims"),
+    CLIENT_IS_NOT_FOUND_FOR_THE_GIVEN_API(407,"Client is not found for the given api or API_KEY is invalid."),
+    USER_IS_ALREADY_REGISTERED_WITH_THIS_PHONE(408,"User is already registered with this phone."),
+    NO_DATA_FOUNDED(409,"No Data Founded."),
 
     INTERNAL_ERROR(500, "An unexpected error occurred."),
 

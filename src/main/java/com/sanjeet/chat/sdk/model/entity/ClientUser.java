@@ -1,4 +1,4 @@
-package com.sanjeet.chat.sdk.model;
+package com.sanjeet.chat.sdk.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -6,35 +6,34 @@ import jakarta.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
-
-@Entity(name = "user_details")
+@Entity(name = "User")
 public class ClientUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name = "user_name", nullable = false)
+    @Column(name = "username", nullable = false)
     private String username;
-    @Column(name = "user_image", nullable = false)
+    @Column(name = "userImage", nullable = false)
     private String userImage;
-    @Column(name = "phone_number", nullable = false)
+    @Column(name = "phoneNumber", nullable = false)
     private String phoneNumber;
-    @Column(name = "api_key", nullable = false)
+    @Column(name = "apiKey", nullable = false)
     private String apiKey;
-    @Column(name = "user_access_token", nullable = true, length = 1024)
+    @Column(name = "userAccessToken", nullable = true, length = 1024)
     private String userAccessToken;
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at")
+    @Column(name = "createdAt")
     private Date createdAt;
     @ManyToOne
-    @JoinColumn(name = "client_id", nullable = false)
+    @JoinColumn(name = "clientId", nullable = false)
     @JsonIgnore
     private Client client;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+            name = "userRoles",
+            joinColumns = @JoinColumn(name = "userId"),
+            inverseJoinColumns = @JoinColumn(name = "roleId")
     )
     private Set<Role> roles;
 

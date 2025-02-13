@@ -1,6 +1,6 @@
 package com.sanjeet.chat.sdk.service;
 
-import com.sanjeet.chat.sdk.model.Client;
+import com.sanjeet.chat.sdk.model.entity.Client;
 import com.sanjeet.chat.sdk.repository.ClientRepository;
 import com.sanjeet.chat.sdk.utils.Constant;
 import com.sanjeet.chat.sdk.utils.globalExceptionHandller.CustomBusinessException;

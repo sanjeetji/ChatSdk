@@ -1,6 +1,6 @@
 package com.sanjeet.chat.sdk.service;
 
-import com.sanjeet.chat.sdk.model.Admin;
+import com.sanjeet.chat.sdk.model.entity.Admin;
 import com.sanjeet.chat.sdk.repository.AdminRepository;
 import com.sanjeet.chat.sdk.utils.Constant;
 import com.sanjeet.chat.sdk.utils.globalExceptionHandller.ErrorCode;

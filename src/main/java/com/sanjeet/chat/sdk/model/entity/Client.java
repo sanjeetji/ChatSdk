@@ -1,11 +1,11 @@
-package com.sanjeet.chat.sdk.model;
+package com.sanjeet.chat.sdk.model.entity;
 
 
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
-@Entity(name = "client_details")
+@Entity(name = "Client")
 public class Client {
 
     @Id
@@ -13,30 +13,30 @@ public class Client {
     private long id;
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "company_name", nullable = false)
+    @Column(name = "companyName", nullable = false)
     private String companyName;
     @Column(name = "email", nullable = false)
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
-    @Column(name = "phone_no", nullable = false)
+    @Column(name = "phoneNo", nullable = false)
     private String phoneNo;
-    @Column(name = "api_key")
+    @Column(name = "apiKey")
     private String apiKey;
-    @Column(name = "secret_key")
+    @Column(name = "secretKey")
     private String secretKey;
-    @Column(name = "is_active")
+    @Column(name = "isActive")
     private boolean isActive;
-    @Column(name = "access_token",nullable = true, length = 1024)
+    @Column(name = "accessToken",nullable = true, length = 1024)
     private String accessToken;
-    @Column(name = "created_at")
+    @Column(name = "createdAt")
     private Date createdAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "client_roles",
-            joinColumns = @JoinColumn(name = "client_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+            name = "clientRoles",
+            joinColumns = @JoinColumn(name = "clientId"),
+            inverseJoinColumns = @JoinColumn(name = "roleId")
     )
     private Set<Role> roles;
 

@@ -5,6 +5,10 @@ import java.util.Arrays;
 public class Constant {
 
     public static final String H_MAC_ALGORITHM = "HmacSHA256";
+    public static final String ADMIN_ENV = "JWT_SECRET_ADMIN";
+    public static final String CLIENT_ENV = "JWT_SECRET_CLIENT";
+    public static final String USER_ENV = "JWT_SECRET_USER";
+
 
     public static final String [] PUBLIC_URLS =
                                                 {
@@ -30,8 +34,11 @@ public class Constant {
     public static final String USER_NOT_FOUND = "User not found";
     public static final String YOU_ARE_NOT_AUTHORIZED = "You are not authorized";
     public static final String LOGIN_SUCCESS = "Login Successful.";
+    public static final String SUCCESS = "Successful.";
     public static final String REGISTRATION_SUCCESS = "Congratulation, You have register successful.";
     public static final String REGISTRATION_FAILED = "Sorry, Registration has been failed.";
+    public static final String SOME_ERROR_OCCURRED = "Sorry, some error has occurred";
+    public static final String INTERNAL_SERVER_ERROR = "Internal server error";
 
     static {
         System.out.println("PUBLIC_URLS: " + Arrays.toString(PUBLIC_URLS)); // Log the URLs

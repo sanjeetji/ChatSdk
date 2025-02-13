@@ -1,6 +1,6 @@
 package com.sanjeet.chat.sdk.service;
 
-import com.sanjeet.chat.sdk.model.Admin;
+import com.sanjeet.chat.sdk.model.entity.Admin;
 import com.sanjeet.chat.sdk.model.dto.AdminLoginRequest;
 import com.sanjeet.chat.sdk.model.dto.AdminRegistrationResponse;
 import com.sanjeet.chat.sdk.repository.AdminRepository;

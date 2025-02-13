@@ -1,10 +1,10 @@
-package com.sanjeet.chat.sdk.model;
+package com.sanjeet.chat.sdk.model.entity;
 
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
-@Entity(name = "admin_details")
+@Entity(name = "Admin")
 public class Admin {
 
     @Id
@@ -16,18 +16,18 @@ public class Admin {
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
-    @Column(name = "phone_no", nullable = false)
+    @Column(name = "phoneNo", nullable = false)
     private String phoneNo;
-    @Column(name = "created_at")
+    @Column(name = "createdAt")
     private Date createdAt;
-    @Column(name = "access_token",nullable = true, length = 1024)
+    @Column(name = "accessToken",nullable = true, length = 1024)
     private String accessToken;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "admin_roles",
-            joinColumns = @JoinColumn(name = "admin_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+            name = "adminRoles",
+            joinColumns = @JoinColumn(name = "adminId"),
+            inverseJoinColumns = @JoinColumn(name = "roleId")
     )
     private Set<Role> roles;
 

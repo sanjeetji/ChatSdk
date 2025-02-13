@@ -1,6 +1,6 @@
 package com.sanjeet.chat.sdk.service;
 
-import com.sanjeet.chat.sdk.model.Client;
+import com.sanjeet.chat.sdk.model.entity.Client;
 import com.sanjeet.chat.sdk.model.dto.ClientLoginRequest;
 import com.sanjeet.chat.sdk.model.dto.ClientRegistrationResponse;
 import com.sanjeet.chat.sdk.repository.ClientRepository;
@@ -8,16 +8,15 @@ import com.sanjeet.chat.sdk.utils.SecretKeyGenerator;
 import com.sanjeet.chat.sdk.utils.ValidateInputs;
 import com.sanjeet.chat.sdk.utils.globalExceptionHandller.CustomBusinessException;
 import com.sanjeet.chat.sdk.utils.globalExceptionHandller.ErrorCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.sanjeet.chat.sdk.utils.Constant.FAILED_TO_LOGIN;
 import static com.sanjeet.chat.sdk.utils.Constant.H_MAC_ALGORITHM;
@@ -25,6 +24,7 @@ import static com.sanjeet.chat.sdk.utils.Constant.H_MAC_ALGORITHM;
 @Service
 public class ClientService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ClientService.class);
     private final ClientRepository clientRepository;
     private final ValidateInputs validateInputs;
     private final PasswordEncoder passwordEncoder;
@@ -117,4 +117,43 @@ public class ClientService {
             throw  new Exception(FAILED_TO_LOGIN + " : " +e.getMessage());
         }
     }
+
+   public List<ClientRegistrationResponse> findAllClients() {
+        return clientRepository.findAll().stream()
+                .map(client -> new ClientRegistrationResponse(
+                        client.getId(),
+                        client.getName(),
+                        client.getEmail(),
+                        client.getPhoneNo(),
+                        client.getCompanyName(),
+                        client.isActive(),
+                        client.getCreatedAt()
+                ))
+                .toList();
+    }
+
+    public List<Client> findAllActiveClients(boolean isActive) {
+        return clientRepository.findAllActiveClients(isActive);
+    }
+
+    public Optional<Client> findByApiKey(String apiKey) {
+        return clientRepository.findByApiKey(apiKey);
+    }
+
+    public Optional<Client> findByEmail(String email) {
+        return clientRepository.findByEmail(email);
+    }
+
+    public String updateClientStatus(Long id, boolean isActive) throws Exception {
+        try {
+            Client client = clientRepository.findById(id).orElseThrow(() -> new Exception("⚠️ No client found with ID: " + id));
+            client.setActive(isActive); // ✅ Update active status
+            clientRepository.save(client); // ✅ Save the updated entity
+            return "Client status updated successfully for ID: " + id;
+        } catch (Exception e) {
+            logger.error("Error updating client status: {}", e.getMessage(), e);
+            throw new Exception("Failed to update client status: " + e.getMessage());
+        }
+    }
+
 }
