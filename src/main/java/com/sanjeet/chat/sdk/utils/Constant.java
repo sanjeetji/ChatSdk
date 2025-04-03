@@ -5,10 +5,7 @@ import java.util.Arrays;
 public class Constant {
 
     public static final String H_MAC_ALGORITHM = "HmacSHA256";
-    public static final String ADMIN_ENV = "JWT_SECRET_ADMIN";
-    public static final String CLIENT_ENV = "JWT_SECRET_CLIENT";
-    public static final String USER_ENV = "JWT_SECRET_USER";
-
+    public static final String ENV_VAR = "JWT_SECRET";
 
     public static final String [] PUBLIC_URLS =
                                                 {
@@ -26,12 +23,12 @@ public class Constant {
     public static final String ADMIN = "ADMIN";
     public static final String ROLE = "role";
     public static final String USER_NAME = "user_name";
+    public static final String PHONE = "phone";
     public static final String CLIENT_ID = "clientId";
     public static final String API_KEY = "apiKey";
     public static final String FAILED_TO_REGISTER = " Failed to register";
     public static final String FAILED_TO_LOGIN = " Failed to login";
     public static final String EMPTY_STRING = "";
-    public static final String USER_NOT_FOUND = "User not found";
     public static final String YOU_ARE_NOT_AUTHORIZED = "You are not authorized";
     public static final String LOGIN_SUCCESS = "Login Successful.";
     public static final String SUCCESS = "Successful.";

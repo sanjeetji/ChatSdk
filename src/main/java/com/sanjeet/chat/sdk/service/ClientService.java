@@ -30,8 +30,7 @@ public class ClientService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public ClientService(ClientRepository clientRepository,ValidateInputs validateInputs
-    ,PasswordEncoder passwordEncoder,JwtService jwtService){
+    public ClientService(ClientRepository clientRepository,ValidateInputs validateInputs,PasswordEncoder passwordEncoder,JwtService jwtService){
         this.clientRepository = clientRepository;
         this.validateInputs = validateInputs;
         this.passwordEncoder = passwordEncoder;
@@ -118,7 +117,7 @@ public class ClientService {
         }
     }
 
-   public List<ClientRegistrationResponse> findAllClients() {
+    public List<ClientRegistrationResponse> findAllClients() {
         return clientRepository.findAll().stream()
                 .map(client -> new ClientRegistrationResponse(
                         client.getId(),

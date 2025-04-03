@@ -49,7 +49,7 @@ public class UserController {
         }
         catch (Exception e){
             logger.error(INTERNAL_SERVER_ERROR + "{}"  , e.getMessage());
-            return handleApiResponse.handleApiFailedResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Something went wrong "+e.getMessage());
+            return handleApiResponse.handleApiFailedResponse(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage());
         }
     }
 

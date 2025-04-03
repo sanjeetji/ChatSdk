@@ -13,4 +13,7 @@ public interface UserRepository extends JpaRepository<ClientUser, Long> {
     @Query("SELECT u FROM User u WHERE u.phoneNumber = :phone_number AND u.apiKey = :api_key")
     Optional<ClientUser> findByPhoneNumber(@Param("phone_number") String phoneNumber, @Param("api_key") String apiKey);
 
+    @Query("SELECT u FROM User u WHERE u.phoneNumber = :phone_number")
+    Optional<ClientUser> findByPhoneNumber(@Param("phone_number") String phoneNumber);
+
 }

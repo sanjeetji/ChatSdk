@@ -2,22 +2,19 @@ package com.sanjeet.chat.sdk.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sanjeet.chat.sdk.model.entity.Admin;
-import com.sanjeet.chat.sdk.repository.AdminRepository;
 import com.sanjeet.chat.sdk.repository.ClientRepository;
 import com.sanjeet.chat.sdk.utils.Constant;
+import com.sanjeet.chat.sdk.utils.SecretKeyGenerator;
 import com.sanjeet.chat.sdk.utils.globalExceptionHandller.CustomBusinessException;
 import com.sanjeet.chat.sdk.utils.globalExceptionHandller.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import static com.sanjeet.chat.sdk.utils.Constant.*;
@@ -26,14 +23,11 @@ import static com.sanjeet.chat.sdk.utils.Constant.*;
 @Service
 public class JwtService {
 
+    private static final long EXPIRATION_90_DAYS = 1000L * 60 * 60 * 24 * 90;
     private final ClientRepository clientRepository;
-    private final AdminRepository adminRepository;
-    private String secretKey = "";
 
-
-    public JwtService(ClientRepository clientRepository, AdminRepository adminRepository) {
+    public JwtService(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
-        this.adminRepository = adminRepository;
     }
 
     public String generateClientAccessToken(String clientId, String apiKey,String email) {
@@ -41,100 +35,77 @@ public class JwtService {
         if (secretKey == null) {
             throw new IllegalArgumentException("Invalid API Key");
         }
-        SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey));
-        String claimSessionToken = UUID.randomUUID().toString(); // Generate session token
-        long expirationTime = 1000 * 60 * 60 * 24; // Token valid for 24 hours
+        SecretKey key = getSigningKey();
+        String claimSessionToken = UUID.randomUUID().toString(); // Generate claimSession token
         Map<String, Object> claims = new HashMap<>();
-        claims.put(Constant.ROLE,Constant.CLIENT);
-        claims.put(Constant.USER_NAME,email);
-        claims.put(Constant.API_KEY,apiKey);
-        claims.put(Constant.CLIENT_ID,clientId);
-        claims.put(Constant.CLAIM_SESSION_TOKEN,claimSessionToken);
+        claims.put(ROLE,Constant.CLIENT);
+        claims.put(USER_NAME,email);
+        claims.put(API_KEY,apiKey);
+        claims.put(CLIENT_ID,clientId);
+        claims.put(CLAIM_SESSION_TOKEN,claimSessionToken);
         return Jwts.builder()
                 .claims()
                 .add(claims)
                 .subject(clientId) // Use clientId as the
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expirationTime))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_90_DAYS))
                 .and()
                 .signWith(key)
                 .compact();
     }
 
-    public String generateUserAccessToken(String clientId, String userId, String apiKey,String phoneNo) {
+    public String generateUserAccessToken(String clientId, String userId, String apiKey,String phoneNo,String userName) {
         String secretKey = clientRepository.findSecretKeyByApiKey(apiKey);
         if (secretKey == null) {
             throw new IllegalArgumentException("Invalid API Key");
         }
-//        SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey));
-        Key key = getSigningKey(ADMIN);
+        Key key = getSigningKey();
         System.out.println("🔑 Signing Key (USER) = " + key);
-        String claimSessionToken = UUID.randomUUID().toString(); // Generate session token
-        long expirationTime = 1000 * 60 * 60; // 1 hour for user tokens
+        String claimSessionToken = UUID.randomUUID().toString(); // Generate claimSession token
         Map<String, Object> claims = new HashMap<>();
-        claims.put(Constant.ROLE,Constant.USER);
-        claims.put(Constant.USER_NAME,phoneNo);
-        claims.put(Constant.CLIENT_ID,clientId);
-        claims.put(Constant.API_KEY,apiKey);
-        claims.put(Constant.CLAIM_SESSION_TOKEN,claimSessionToken);
+        claims.put(ROLE,Constant.USER);
+        claims.put(USER_NAME,userName);
+        claims.put(PHONE,phoneNo);
+        claims.put(CLIENT_ID,clientId);
+        claims.put(API_KEY,apiKey);
+        claims.put(CLAIM_SESSION_TOKEN,claimSessionToken);
         return Jwts.builder()
                 .claims()
                 .add(claims)
                 .subject(userId)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expirationTime))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_90_DAYS))
                 .and()
                 .signWith(key)
                 .compact();
     }
 
-    public String generateAdminAccessToken(String email) {
-        System.out.println("Generating JWT for email: " + email);
-        if (email == null || email.isEmpty()) {
-            throw new IllegalArgumentException("Email cannot be null or empty");
-        }
-        Optional<Admin> registerAdmin = adminRepository.findByEmail(email);
-        if (registerAdmin.isEmpty()){
-            throw new CustomBusinessException(ErrorCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
-        }
-        String claimSessionToken = UUID.randomUUID().toString(); // Generate session token
-        long expirationTime = 1000 * 60 * 60 * 24; // Token valid for 24 hours
+    public String generateAdminAccessToken(Admin admin) {
+        System.out.println("Generating JWT for email: " + admin.getEmail());
+        String claimSessionToken = UUID.randomUUID().toString(); // Generate claimSession token
         Map<String, Object> claims = new HashMap<>();
-        claims.put(Constant.ROLE,Constant.ADMIN);
-        claims.put(Constant.USER_NAME,email);
+        claims.put(ROLE,Constant.ADMIN);
+        claims.put(USER_NAME,admin.getName());
+        claims.put(PHONE,admin.getPhoneNo());
         claims.put(Constant.CLAIM_SESSION_TOKEN,claimSessionToken);
-        Key key = getSigningKey(ADMIN);
+        Key key = getSigningKey();
         System.out.println("🔑 Signing Key (ADMIN) = " + key);
         return Jwts.builder()
                 .claims()
                 .add(claims)
-                .subject(email)
+                .subject(admin.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expirationTime))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_90_DAYS))
                 .and()
                 .signWith(key)
                 .compact();
-    }
-
-    private void initializeAdminSecretKey() {
-        try {
-            KeyGenerator keyGen = KeyGenerator.getInstance(H_MAC_ALGORITHM);
-            SecretKey sk = keyGen.generateKey();
-            secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public Claims validateTokenAndGetClaims(String token, String apiKey) throws Exception {
         try {
             SecretKey key;
             if (apiKey != null) {
-                String secretKey = clientRepository.findSecretKeyByApiKey(apiKey);
-                if (secretKey == null) {
-                    throw new IllegalArgumentException("Invalid API Key");
-                }
-                key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey));
+                key = getSigningKey();
                 return Jwts.parser()
                         .verifyWith(key)
                         .build()
@@ -155,7 +126,7 @@ public class JwtService {
         System.out.println("🔍 Extracted Role from Token: " + extractedRole);
 
         // Step 2: Fetch the correct key based on extracted role
-        SecretKey key = getSigningKey(extractedRole);
+        SecretKey key = getSigningKey();
         System.out.println("🔑 Using Signing Key for Role: " + extractedRole);
 
 //        SecretKey key = getSigningKey("ADMIN"); // ✅ Now returns a SecretKey
@@ -166,14 +137,6 @@ public class JwtService {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-    }
-
-    private String extractRoleFromTokenOld(String token) {
-        return Jwts.parser()
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .get(Constant.ROLE, String.class); // Assuming the claim key is "role"
     }
 
     private String extractRoleFromToken(String token) {
@@ -197,36 +160,17 @@ public class JwtService {
         }
     }
 
-    private SecretKey getKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
-
     public Collection<GrantedAuthority> getAuthorities(String role) {
         return List.of(() -> "ROLE_"+role); // Assign role as GrantedAuthority
     }
 
-    private SecretKey getSigningKey(String role) {
-        System.out.println("🔍 All Available Environment Variables: " + System.getenv());
-        System.out.println("🔍 JWT_SECRET_ADMIN: " + System.getenv("JWT_SECRET_ADMIN"));
-
-        String secret = switch (role.toUpperCase()) {
-            case "ADMIN" -> System.getenv("JWT_SECRET_ADMIN");
-            case "CLIENT" -> System.getenv("JWT_SECRET_CLIENT");
-            case "USER" -> System.getenv("JWT_SECRET_USER");
-            default -> throw new IllegalArgumentException("Invalid role: " + role);
-        };
-
+    private SecretKey getSigningKey() {
+        String secret = SecretKeyGenerator.getSecret();
         if (secret == null || secret.isEmpty()) {
-            throw new IllegalStateException("❌ Secret key is not set in environment variables for role: " + role);
+            throw new IllegalStateException("❌ JWT_SECRET not set");
         }
-
-        // ✅ Ensure correct key format for HMAC-SHA256
-        byte[] decodedKey = Base64.getDecoder().decode(secret);
-        return Keys.hmacShaKeyFor(decodedKey);  // ✅ Returns a proper SecretKey
+        return Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret));
     }
-
-
 
 
 }

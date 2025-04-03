@@ -50,7 +50,9 @@ public class UserService {
             String userAccessToken = jwtService.generateUserAccessToken(
                     String.valueOf(savedClient.get().getId()),
                     String.valueOf(user.getId()),
-                    String.valueOf(savedClient.get().getApiKey()),request.getPhoneNumber());
+                    String.valueOf(savedClient.get().getApiKey()),
+                    request.getPhoneNumber(),
+                    request.getUsername());
             updateUserSessionToken(user, userAccessToken);
             user.setUserAccessToken(userAccessToken);
             return new UserDetailsResponse(
