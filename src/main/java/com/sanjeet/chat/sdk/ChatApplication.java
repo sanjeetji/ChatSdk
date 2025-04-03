@@ -5,21 +5,17 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.security.Key;
-import java.util.Arrays;
-
-import static com.sanjeet.chat.sdk.utils.Constant.ADMIN;
+import static com.sanjeet.chat.sdk.utils.Constant.ENV_VAR;
 
 @SpringBootApplication
 public class ChatApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ChatApplication.class, args);
-
 		// Debugging at startup
 		System.out.println("🔍 Server Started - Checking Environment Variables...");
 		System.out.println("🔍 All Available Environment Variables: " + System.getenv());
-		System.out.println("🔍 JWT_SECRET_ADMIN: " + System.getenv("JWT_SECRET_ADMIN"));
+		System.out.println("🔍 JWT_SECRET KEY IS : " + System.getenv(ENV_VAR));
 	}
 
 	@PostConstruct

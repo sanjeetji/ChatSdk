@@ -31,8 +31,7 @@ public class ClientController {
     private final HandleApiResponse handleApiResponse;
     private final AuthenticationProvider clientAuthenticationProvider;
 
-    public ClientController(ClientService clientService,HandleApiResponse handleApiResponse
-            ,@Qualifier("clientAuthenticationProvider")AuthenticationProvider clientAuthenticationProvider){
+    public ClientController(ClientService clientService,HandleApiResponse handleApiResponse,@Qualifier("clientAuthenticationProvider")AuthenticationProvider clientAuthenticationProvider){
         this.clientService = clientService;
         this.handleApiResponse = handleApiResponse;
         this.clientAuthenticationProvider = clientAuthenticationProvider;

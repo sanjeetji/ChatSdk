@@ -12,9 +12,9 @@ public enum ErrorCode {
     CLIENT_IS_NOT_FOUND_FOR_THE_GIVEN_API(407,"Client is not found for the given api or API_KEY is invalid."),
     USER_IS_ALREADY_REGISTERED_WITH_THIS_PHONE(408,"User is already registered with this phone."),
     NO_DATA_FOUNDED(409,"No Data Founded."),
-
+    CLIENT_IS_NOT_ACTIVE(4010,"Client is not found or client is not active."),
+    USER_IS_NOT_FOUND(4011,"User is not found with given phone and api key"),
     INTERNAL_ERROR(500, "An unexpected error occurred."),
-
     RECEIVER_NOT_FOUND(600, "Receiver is not founded."),
     SENDER_RECEIVER_PHONE_NO_CAN_NOT_BE_SAME(601, "Sender and receiver's phone no should be different.");
 

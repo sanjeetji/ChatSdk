@@ -129,8 +129,7 @@ public class AdminController {
     }
 
     @PutMapping("/update-client-status")
-    public ResponseEntity<?> changeClientStatus(@RequestParam Long id,
-                                                @RequestParam boolean isActive){
+    public ResponseEntity<?> changeClientStatus(@RequestParam Long id, @RequestParam boolean isActive){
         try {
             String message = clientService.updateClientStatus(id,isActive);
             return handleApiResponse.handleApiSuccessResponse(HttpStatus.OK,Constant.SUCCESS,message);

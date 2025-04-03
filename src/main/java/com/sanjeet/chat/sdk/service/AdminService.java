@@ -20,12 +20,10 @@ public class AdminService {
 
     private final AdminRepository adminRepository;
     private final ValidateInputs validateInputs;
-//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public AdminService(AdminRepository adminRepository,ValidateInputs validateInputs,
-                        PasswordEncoder passwordEncoder,JwtService jwtService){
+    public AdminService(AdminRepository adminRepository,ValidateInputs validateInputs, PasswordEncoder passwordEncoder,JwtService jwtService){
         this.adminRepository = adminRepository;
         this.validateInputs = validateInputs;
         this.passwordEncoder = passwordEncoder;
@@ -57,7 +55,7 @@ public class AdminService {
             if (admin.isEmpty()){
                 throw new CustomBusinessException(ErrorCode.FAILED_TO_LOGIN,HttpStatus.NOT_FOUND);
             }
-            String accessToken = jwtService.generateAdminAccessToken(request.getEmail());
+            String accessToken = jwtService.generateAdminAccessToken(admin.get());
             updateAdminAccessToken(admin.get(), accessToken);
             return new AdminRegistrationResponse(
                     admin.get().getId(), admin.get().getName(), admin.get().getEmail(),

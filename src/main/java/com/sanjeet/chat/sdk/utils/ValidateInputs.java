@@ -4,6 +4,7 @@ package com.sanjeet.chat.sdk.utils;
 import com.sanjeet.chat.sdk.model.entity.Admin;
 import com.sanjeet.chat.sdk.model.entity.Client;
 import com.sanjeet.chat.sdk.model.entity.ClientUser;
+import com.sanjeet.chat.sdk.model.entity.Message;
 import com.sanjeet.chat.sdk.utils.globalExceptionHandller.AccessDeniedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
@@ -82,6 +83,15 @@ public class ValidateInputs {
             throw new AccessDeniedException("API_KEY header is missing");
         }
         return apiKey;
+    }
+
+    public void handlePostMessageInput(Message request) {
+        if (request.getReceiverPhone() == null || request.getReceiverPhone().isEmpty()) {
+            throw new IllegalArgumentException("Receiver phone no cannot be null or empty");
+        }
+        if (request.getMessage() == null || request.getMessage().isEmpty()) {
+            throw new IllegalArgumentException("Message cannot be null or empty");
+        }
     }
 
 
