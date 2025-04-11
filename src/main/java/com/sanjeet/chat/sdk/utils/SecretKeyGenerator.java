@@ -4,7 +4,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Base64;
-
 import static com.sanjeet.chat.sdk.utils.Constant.*;
 
 public class SecretKeyGenerator {
