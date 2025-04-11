@@ -1,7 +1,7 @@
 services:
   - type: web
     name: chat-sdk
-    runtime: openjdk17  # Use Java 17; change to openjdk11 if needed
+    runtime: openjdk21  # Updated to Java 21
     plan: free  # Explicitly use free tier
     branch: main
     repo: https://github.com/sanjeetji/ChatSdk
