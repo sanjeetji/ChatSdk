@@ -1,7 +1,7 @@
 services:
   - type: web
     name: chat-sdk
-    env: java # Use 'java' as the environment, not runtime
+    env: java
     plan: free
     branch: main
     repo: https://github.com/sanjeetji/ChatSdk
@@ -9,9 +9,13 @@ services:
     startCommand: java -jar target/Chat-0.0.1-SNAPSHOT.jar
     envVars:
       - key: JAVA_VERSION
-        value: "17" # Specify the Java version (e.g., 17, 21, etc.)
+        value: "17"
       - key: JAVA_OPTS
         value: "-Xms256m -Xmx512m"
       - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
         sync: false
     autoDeploy: true
