@@ -1,7 +1,7 @@
 services:
   - type: web
     name: chat-sdk
-    runtime: java17  # use java or java17
+    runtime: java  # REQUIRED as per new Render schema
     plan: free
     branch: main
     repo: https://github.com/sanjeetji/ChatSdk
