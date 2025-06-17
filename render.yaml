@@ -1,7 +1,6 @@
 services:
   - type: web
     name: chat-sdk
-    runtime: java17  # use java or java17
     plan: free
     branch: main
     repo: https://github.com/sanjeetji/ChatSdk
@@ -11,5 +10,5 @@ services:
       - key: JAVA_OPTS
         value: "-Xms256m -Xmx512m"
       - key: SPRING_DATASOURCE_URL
-        sync: false  # Set in Render dashboard if your app uses a database
+        sync: false
     autoDeploy: true
