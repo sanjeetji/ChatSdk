@@ -5,7 +5,7 @@ services:
     plan: free
     branch: main
     repo: https://github.com/sanjeetji/ChatSdk
-    dockerfilePath: ./dockerfile
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: JAVA_OPTS
         value: "-Xms256m -Xmx512m"
