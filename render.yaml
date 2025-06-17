@@ -3,6 +3,8 @@ services:
     name: chat-sdk
     runtime: java17  # use java or java17
     plan: free
+    runtime: openjdk21  # Updated to Java 21
+    plan: free  # Explicitly use free tier
     branch: main
     repo: https://github.com/sanjeetji/ChatSdk
     buildCommand: ./mvnw clean package -DskipTests
@@ -11,5 +13,5 @@ services:
       - key: JAVA_OPTS
         value: "-Xms256m -Xmx512m"
       - key: SPRING_DATASOURCE_URL
-        sync: false
+        sync: false  # Set in Render dashboard if your app uses a database
     autoDeploy: true
