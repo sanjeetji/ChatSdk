@@ -3,8 +3,6 @@ services:
     name: chat-sdk
     runtime: java17  # use java or java17
     plan: free
-    runtime: openjdk21  # Updated to Java 21
-    plan: free  # Explicitly use free tier
     branch: main
     repo: https://github.com/sanjeetji/ChatSdk
     buildCommand: ./mvnw clean package -DskipTests
