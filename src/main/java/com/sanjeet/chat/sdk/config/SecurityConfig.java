@@ -73,7 +73,23 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
+        return new BCryptPasswordEncoder(12) {
+            @Override
+            public String encode(CharSequence rawPassword) {
+                if (rawPassword != null && rawPassword.length() > 72) {
+                    throw new IllegalArgumentException("Password length must not exceed 72 characters");
+                }
+                return super.encode(rawPassword);
+            }
+
+            @Override
+            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+                if (rawPassword != null && rawPassword.length() > 72) {
+                    throw new IllegalArgumentException("Password length must not exceed 72 characters");
+                }
+                return super.matches(rawPassword, encodedPassword);
+            }
+        };
     }
 
     @Bean

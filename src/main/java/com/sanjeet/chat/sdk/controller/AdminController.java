@@ -46,7 +46,7 @@ public class AdminController {
         this.clientService = clientService;
     }
 
-    @GetMapping("greeting")
+    @GetMapping("/greeting")
     public String greeting(){
         return "Have a nice day admin...";
     }
